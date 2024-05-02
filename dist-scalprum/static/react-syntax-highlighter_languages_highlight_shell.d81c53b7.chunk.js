@@ -1,0 +1,2 @@
+(self.webpackChunkplugin_web_rca=self.webpackChunkplugin_web_rca||[]).push([[464],{77918:e=>{e.exports=function(e){return{name:"Shell Session",aliases:["console"],contains:[{className:"meta",begin:/^\s{0,3}[/~\w\d[\]()@-]*[>%$#]/,starts:{end:/[^\\](?=\s*$)/,subLanguage:"bash"}}]}}}}]);
+//# sourceMappingURL=react-syntax-highlighter_languages_highlight_shell.d81c53b7.chunk.js.map

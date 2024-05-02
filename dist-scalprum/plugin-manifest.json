@@ -1,0 +1,11 @@
+{
+  "name": "plugin-web-rca",
+  "version": "0.1.0",
+  "extensions": [],
+  "registrationMethod": "callback",
+  "baseURL": "auto",
+  "loadScripts": [
+    "plugin-web-rca.78d097114b90962c46e1.js"
+  ],
+  "buildHash": "78d097114b90962c46e19ac6dfeb0517"
+}

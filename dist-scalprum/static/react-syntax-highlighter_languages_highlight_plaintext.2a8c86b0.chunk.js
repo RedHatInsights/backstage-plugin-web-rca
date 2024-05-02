@@ -1,0 +1,2 @@
+(self.webpackChunkplugin_web_rca=self.webpackChunkplugin_web_rca||[]).push([[2979],{7939:e=>{e.exports=function(e){return{name:"Plain text",aliases:["text","txt"],disableAutodetect:!0}}}}]);
+//# sourceMappingURL=react-syntax-highlighter_languages_highlight_plaintext.2a8c86b0.chunk.js.map
