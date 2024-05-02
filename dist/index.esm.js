@@ -19,7 +19,7 @@ const webRcaPlugin = createPlugin({
 const WebRcaPage = webRcaPlugin.provide(
   createRoutableExtension({
     name: "WebRcaPage",
-    component: () => import('./esm/index-e3c4f36b.esm.js').then((m) => m.WebRCAComponent),
+    component: () => import('./esm/index-5bacae48.esm.js').then((m) => m.WebRCAComponent),
     // import('./components/WebRCAFetchComponent').then(m => m.WebRCAFetchComponent),
     mountPoint: rootRouteRef
   })
@@ -43,7 +43,6 @@ const DenseTable = ({
   ];
   const data = incidents.items.map((inc) => {
     return {
-      // incident_id: <a target="_blank" rel="noreferrer" href={`https://web-rca.stage.devshift.net/incident/${inc.incident_id}/events`}>{inc.incident_id}</a>,
       incident_id: /* @__PURE__ */ React.createElement(
         "a",
         {
@@ -108,6 +107,14 @@ const WebRCAFetchComponent = ({ product }) => {
   const user = useApi(identityApiRef);
   const entity = useEntity();
   const { value, loading, error } = useAsync(async () => {
+    const profile_info = await user.getProfileInfo().then((pi) => {
+      return pi;
+    });
+    console.log(profile_info);
+    const backstage_identity = await user.getBackstageIdentity().then((bi) => {
+      return bi;
+    });
+    console.log(backstage_identity);
     const refresh_token = await user.getCredentials().then((creds) => {
       console.log(creds);
       console.log(creds.token);
@@ -117,10 +124,17 @@ const WebRCAFetchComponent = ({ product }) => {
       return "Invalid token";
     }
     console.log(refresh_token);
-    const token = await refresh(
-      config.getString("backend.baseUrl"),
-      refresh_token
-    );
+    let token;
+    try {
+      token = await refresh(
+        config.getString("backend.baseUrl"),
+        refresh_token
+      );
+    } catch (e) {
+      console.log("Error: ", e);
+      return "Invalid token";
+    }
+    console.log("Token: ", token);
     let products = "";
     if (product) {
       const p = await lookupProduct(
@@ -146,9 +160,7 @@ const WebRCAFetchComponent = ({ product }) => {
       return "No product based on entity";
     }
     const incidentList = fetch(
-      `${config.getString(
-        "backend.baseUrl"
-      )}/api/proxy/web-rca/incidents${products}`,
+      `${config.getString("backend.baseUrl")}/api/proxy/web-rca/incidents${products}`,
       {
         headers: {
           Authorization: `Bearer ${token.access_token}`

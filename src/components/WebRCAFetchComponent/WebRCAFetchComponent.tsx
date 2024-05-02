@@ -162,6 +162,14 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
   const { value, loading, error } = useAsync(async (): Promise<
     IncidentList | string
   > => {
+      const profile_info = await user.getProfileInfo().then((pi) => {
+        return pi;
+      })
+      console.log(profile_info);
+      const backstage_identity = await user.getBackstageIdentity().then((bi) => {
+        return bi;
+      })
+      console.log(backstage_identity);
       const refresh_token = await user.getCredentials().then((creds) => {
         console.log(creds);
         console.log(creds.token);
@@ -171,10 +179,17 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
         return 'Invalid token';
       }
       console.log(refresh_token);
-      const token = await refresh(
-        config.getString('backend.baseUrl'),
-        refresh_token,
-      );
+      let token;
+      try {
+        token = await refresh(
+          config.getString('backend.baseUrl'),
+          refresh_token,
+        );
+      } catch (e) {
+        console.log("Error: ", e);
+        return 'Invalid token';
+      }
+      console.log("Token: ", token);
 
       let products = '';
       if (product) {
