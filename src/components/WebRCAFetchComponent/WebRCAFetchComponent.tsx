@@ -190,6 +190,9 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
         return 'Invalid token';
       }
       console.log("Token: ", token);
+      if (token.error) {
+        return token.error_description;
+      }
 
       let products = '';
       if (product) {

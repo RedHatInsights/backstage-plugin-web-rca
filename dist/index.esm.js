@@ -19,7 +19,7 @@ const webRcaPlugin = createPlugin({
 const WebRcaPage = webRcaPlugin.provide(
   createRoutableExtension({
     name: "WebRcaPage",
-    component: () => import('./esm/index-5bacae48.esm.js').then((m) => m.WebRCAComponent),
+    component: () => import('./esm/index-fafe2224.esm.js').then((m) => m.WebRCAComponent),
     // import('./components/WebRCAFetchComponent').then(m => m.WebRCAFetchComponent),
     mountPoint: rootRouteRef
   })
@@ -135,6 +135,9 @@ const WebRCAFetchComponent = ({ product }) => {
       return "Invalid token";
     }
     console.log("Token: ", token);
+    if (token.error) {
+      return token.error_description;
+    }
     let products = "";
     if (product) {
       const p = await lookupProduct(
