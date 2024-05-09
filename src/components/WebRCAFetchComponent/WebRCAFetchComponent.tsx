@@ -11,6 +11,7 @@ import '@backstage/plugin-user-settings';
 import { Typography } from '@material-ui/core';
 import { InfoCard } from '@backstage/core-components';
 import { useEntity } from '@backstage/plugin-catalog-react';
+import local_incidents from './data.json';
 
 interface DenseTableProps {
   incidents?: IncidentList;
@@ -26,9 +27,10 @@ interface Incident {
   summary?: string;
   description?: string;
 }
-
+// jq '{kind, page, size, total, items: [.items[] | {id, kind, href, incident_id, summary, description}]}'
 interface IncidentList {
-  kind: 'IncidentList';
+  kind: string;
+  //kind: 'IncidentList';
   page?: number;
   size?: number;
   total?: number;
@@ -57,6 +59,7 @@ export const DenseTable = ({
   web_rca_url,
   message,
 }: DenseTableProps) => {
+  /*
   if (message) {
     return (
       <InfoCard title="Error fetching incidents">
@@ -72,6 +75,19 @@ export const DenseTable = ({
       </InfoCard>
     );
   }
+  */
+
+  if (message || !incidents || !incidents.items || incidents.items.length === 0) {
+    incidents = local_incidents;
+  }
+  if (!incidents || !incidents.items || incidents.items.length === 0) {
+    return (
+      <InfoCard title="Error fetching incidents">
+        <Typography variant="body1">{message}</Typography>
+      </InfoCard>
+    );
+  }
+
 
   const columns: TableColumn[] = [
     { title: 'ID', field: 'incident_id' },

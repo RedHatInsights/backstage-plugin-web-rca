@@ -14,7 +14,7 @@ interface Incident {
     description?: string;
 }
 interface IncidentList {
-    kind: 'IncidentList';
+    kind: string;
     page?: number;
     size?: number;
     total?: number;

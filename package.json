@@ -23,7 +23,8 @@
     "prepack": "backstage-cli package prepack",
     "postpack": "backstage-cli package postpack",
     "tsc": "tsc",
-    "export-dynamic": "janus-cli package export-dynamic-plugin"
+    "export-dynamic": "janus-cli package export-dynamic-plugin",
+    "repack": "yarn tsc && yarn export-dynamic && yarn pack"
   },
   "dependencies": {
     "@backstage/core-components": "^0.13.6",
