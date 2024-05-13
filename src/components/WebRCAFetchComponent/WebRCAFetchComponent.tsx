@@ -62,16 +62,16 @@ export const DenseTable = ({
   /*
   if (message) {
     return (
-      <InfoCard title="Error fetching incidents">
-        <Typography variant="body1">{message}</Typography>
+      <InfoCard title="Web RCA Incidents">
+        <Typography variant="body1">{"Error fetching incidents: " + message }</Typography>
       </InfoCard>
     );
   }
 
   if (!incidents || !incidents.items || incidents.items.length === 0) {
     return (
-      <InfoCard title="Error fetching incidents">
-        <Typography variant="body1">"No Incidents"</Typography>
+      <InfoCard title="Web RCA Incidents">
+        <Typography variant="body1">"Error fetching incidents: No Incidents"</Typography>
       </InfoCard>
     );
   }
@@ -82,8 +82,8 @@ export const DenseTable = ({
   }
   if (!incidents || !incidents.items || incidents.items.length === 0) {
     return (
-      <InfoCard title="Error fetching incidents">
-        <Typography variant="body1">{message}</Typography>
+      <InfoCard title="Web RCA Incidents">
+        <Typography variant="body1">{"Error fetching incidents: " + message }</Typography>
       </InfoCard>
     );
   }
@@ -113,7 +113,7 @@ export const DenseTable = ({
 
   return (
     <Table
-      title="Incidents"
+      title="Web RCA Incidents"
       options={{ search: true, paging: true, pageSize: 10 }}
       columns={columns}
       data={data}
