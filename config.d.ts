@@ -6,6 +6,16 @@ export interface Config {
     /**
      * @visibility frontend
      */
-    'web-rca-url': string;
+    'webRcaUIUrl': string;
+
+    /**
+     * @visibility frontend
+     */
+    'clientId': string;
+
+    /**
+     * @visibility frontend
+     */
+    'clientSecret': string;
   };
 }

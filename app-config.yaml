@@ -3,7 +3,9 @@ app:
   baseUrl: http://localhost:3000
 
 ocm:
-  web-rca-url: https://api.stage.openshift
+  webRcaUrl: https://web-rca.stage.devshift.net
+  clientId: foo
+  clientSecret: bar
 
 organization:
   name: local

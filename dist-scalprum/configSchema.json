@@ -23,10 +23,20 @@
       "visibility": "frontend",
       "type": "object",
       "required": [
-        "web-rca-url"
+        "clientId",
+        "clientSecret",
+        "webRcaUIUrl"
       ],
       "properties": {
-        "web-rca-url": {
+        "webRcaUIUrl": {
+          "visibility": "frontend",
+          "type": "string"
+        },
+        "clientId": {
+          "visibility": "frontend",
+          "type": "string"
+        },
+        "clientSecret": {
           "visibility": "frontend",
           "type": "string"
         }

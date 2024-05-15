@@ -6,12 +6,11 @@ import {
   ResponseErrorPanel,
 } from '@backstage/core-components';
 import useAsync from 'react-use/lib/useAsync';
-import { useApi, configApiRef, identityApiRef } from '@backstage/core-plugin-api';
+import { useApi, configApiRef } from '@backstage/core-plugin-api';
 import '@backstage/plugin-user-settings';
 import { Typography } from '@material-ui/core';
 import { InfoCard } from '@backstage/core-components';
 import { useEntity } from '@backstage/plugin-catalog-react';
-import local_incidents from './data.json';
 
 interface DenseTableProps {
   incidents?: IncidentList;
@@ -29,8 +28,7 @@ interface Incident {
 }
 // jq '{kind, page, size, total, items: [.items[] | {id, kind, href, incident_id, summary, description}]}'
 interface IncidentList {
-  kind: string;
-  //kind: 'IncidentList';
+  kind: 'IncidentList';
   page?: number;
   size?: number;
   total?: number;
@@ -59,7 +57,6 @@ export const DenseTable = ({
   web_rca_url,
   message,
 }: DenseTableProps) => {
-  /*
   if (message) {
     return (
       <InfoCard title="Web RCA Incidents">
@@ -75,11 +72,7 @@ export const DenseTable = ({
       </InfoCard>
     );
   }
-  */
 
-  if (message || !incidents || !incidents.items || incidents.items.length === 0) {
-    incidents = local_incidents;
-  }
   if (!incidents || !incidents.items || incidents.items.length === 0) {
     return (
       <InfoCard title="Web RCA Incidents">
@@ -121,12 +114,13 @@ export const DenseTable = ({
   );
 };
 
-async function refresh(url: string, refresh_token: string) {
+async function refresh(url: string, client_id: string, client_secret: string) {
   // @REF [URL Encoded form body](https://stackoverflow.com/questions/35325370/how-do-i-post-a-x-www-form-urlencoded-request-using-fetch/37562814#37562814)
   const details: { [index: string]: string } = {
-    grant_type: 'refresh_token',
-    client_id: 'cloud-services',
-    refresh_token: `${refresh_token}`,
+    grant_type: 'client_credentials',
+    client_id: client_id,
+    client_secret: client_secret,
+    scope: 'openid',
   };
 
   const formBody = [];
@@ -172,40 +166,42 @@ async function lookupProduct(
 
 export const WebRCAFetchComponent = ({ product }: FetchProps) => {
   const config = useApi(configApiRef);
-  const user = useApi(identityApiRef);
+  // const user = useApi(identityApiRef);
   const entity = useEntity();
 
   const { value, loading, error } = useAsync(async (): Promise<
     IncidentList | string
   > => {
-      const profile_info = await user.getProfileInfo().then((pi) => {
-        return pi;
-      })
-      console.log(profile_info);
-      const backstage_identity = await user.getBackstageIdentity().then((bi) => {
-        return bi;
-      })
-      console.log(backstage_identity);
-      const refresh_token = await user.getCredentials().then((creds) => {
-        console.log(creds);
-        console.log(creds.token);
-        return creds.token;
-      });
-      if (refresh_token === undefined) {
-        return 'Invalid token';
-      }
-      console.log(refresh_token);
+      // TODO: Should we limit to owner/mine?
+      //
+      // const profile_info = await user.getProfileInfo().then((pi) => {
+      //   return pi;
+      // })
+      // console.log(profile_info);
+      // const backstage_identity = await user.getBackstageIdentity().then((bi) => {
+      //   return bi;
+      // })
+      // console.log(backstage_identity);
+      // const refresh_token = await user.getCredentials().then((creds) => {
+      //   console.log(creds);
+      //   console.log(creds.token);
+      //   return creds.token;
+      // });
+      // if (refresh_token === undefined) {
+      //   return 'Invalid token';
+      // }
+      // console.log(refresh_token);
       let token;
       try {
         token = await refresh(
           config.getString('backend.baseUrl'),
-          refresh_token,
+          config.getString('ocm.clientId'),
+          config.getString('ocm.clientSecret'),
         );
       } catch (e) {
         console.log("Error: ", e);
         return 'Invalid token';
       }
-      console.log("Token: ", token);
       if (token.error) {
         return token.error_description;
       }
@@ -272,7 +268,7 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
     return (
       <DenseTable
         message={value}
-        web_rca_url={config.getString('ocm.web-rca-url')}
+        web_rca_url={config.getString('ocm.webRcaUIUrl')}
       />
     );
   }
@@ -280,7 +276,7 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
   return (
     <DenseTable
       incidents={value}
-      web_rca_url={config.getString('ocm.web-rca-url')}
+      web_rca_url={config.getString('ocm.webRcaUIUrl')}
     />
   );
 };
