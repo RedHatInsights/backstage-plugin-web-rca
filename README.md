@@ -1,13 +1,13 @@
 # web-rca
 
-Welcome to the web-rca plugin!
+This plugin is meant to provide a table of all incidents related to an entity.
+If you are viewing a service entity, you can click the `issues` tabs and at the
+bottom you'll see a card titled "Web RCA Incidents".  In this card, you will
+find a table showing the id, summary, and description of incidents related to
+the current entity.  Clicking the ID field will open the incident in the
+web-rca ui in a new tab.
 
-_This plugin was created through the Backstage CLI_
-
-## Getting started
-
-Your plugin has been added to the example app in this repository, meaning you'll be able to access it by running `yarn start` in the root directory, and then navigating to [/web-rca](http://localhost:3000/web-rca).
-
-You can also serve the plugin in isolation by running `yarn start` in the plugin directory.
-This method of serving the plugin provides quicker iteration speed and a faster startup and hot reloads.
-It is only meant for local development, and the setup for it can be found inside the [/dev](./dev) directory.
+Linking this information to inScope, particularly in the `issues` tab allows
+services owners to see web-rca incidents next to GitHub issues to make sure all
+problems are covered.  This also makes a great analog to web-rca's "follow up"
+feature.
