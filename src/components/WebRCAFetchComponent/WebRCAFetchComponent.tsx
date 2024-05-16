@@ -120,7 +120,7 @@ async function refresh(url: string, client_id: string, client_secret: string) {
     grant_type: 'client_credentials',
     client_id: client_id,
     client_secret: client_secret,
-    scope: 'openid',
+    scope: 'openid api.ocm',
   };
 
   const formBody = [];
