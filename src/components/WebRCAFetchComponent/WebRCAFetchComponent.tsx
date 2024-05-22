@@ -94,7 +94,7 @@ export const DenseTable = ({
         <a
           target="_blank"
           rel="noreferrer"
-          href={`${web_rca_url}/incident/${inc.incident_id}/events`}
+          href={`${web_rca_url}/incident/${inc.incident_id}/details`}
         >
           {inc.incident_id}
         </a>
