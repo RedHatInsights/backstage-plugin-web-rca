@@ -243,15 +243,16 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
           }
         } catch {
           console.log("Error using user token, falling back to default token");
+          token = default_token.access_token;
           p = await lookupProduct(
             config.getString('backend.baseUrl'),
-            default_token.access_token,
+            token,
             entity.entity.metadata.name,
           );
           if (p.items && p.items.length > 0) {
             products = `?product_id=${p.items[0].id}`;
           }
-        }
+          }
       }
 
       if (products === '') {
@@ -259,9 +260,8 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
       }
 
       let incidentList;
-      try {
       // TODO: Filter by status?  Add a toggle?
-      incidentList = fetch(
+      incidentList = await fetch(
         `${config.getString('backend.baseUrl')}/api/proxy/web-rca/incidents${products}`,
         {
           headers: {
@@ -270,22 +270,8 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
           },
         },
       )
-      .then(resp => resp.json())
-      .catch(e => e);
-      } catch {
-        console.log("Error using user token, falling back to default token");
-        incidentList = fetch(
-          `${config.getString('backend.baseUrl')}/api/proxy/web-rca/incidents${products}`,
-          {
-            headers: {
-              // Authorization: `Bearer ${token.access_token}`,
-              Authorization: `Bearer ${default_token.access_token}`,
-            },
-          },
-        )
-          .then(resp => resp.json())
-          .catch(e => e);
-      }
+        .then(resp => resp.json())
+        .catch(e => e);
 
       return incidentList as Promise<IncidentList>;
     }, []);
