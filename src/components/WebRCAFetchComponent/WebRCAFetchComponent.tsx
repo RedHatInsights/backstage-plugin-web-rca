@@ -6,7 +6,7 @@ import {
   ResponseErrorPanel,
 } from '@backstage/core-components';
 import useAsync from 'react-use/lib/useAsync';
-import { useApi, configApiRef } from '@backstage/core-plugin-api';
+import { useApi, configApiRef, identityApiRef } from '@backstage/core-plugin-api';
 import '@backstage/plugin-user-settings';
 import { Typography } from '@material-ui/core';
 import { InfoCard } from '@backstage/core-components';
@@ -166,7 +166,7 @@ async function lookupProduct(
 
 export const WebRCAFetchComponent = ({ product }: FetchProps) => {
   const config = useApi(configApiRef);
-  // const user = useApi(identityApiRef);
+  const user = useApi(identityApiRef);
   const entity = useEntity();
 
   const { value, loading, error } = useAsync(async (): Promise<
@@ -174,26 +174,27 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
   > => {
       // TODO: Should we limit to owner/mine?
       //
-      // const profile_info = await user.getProfileInfo().then((pi) => {
-      //   return pi;
-      // })
-      // console.log(profile_info);
-      // const backstage_identity = await user.getBackstageIdentity().then((bi) => {
-      //   return bi;
-      // })
-      // console.log(backstage_identity);
-      // const refresh_token = await user.getCredentials().then((creds) => {
-      //   console.log(creds);
-      //   console.log(creds.token);
-      //   return creds.token;
-      // });
-      // if (refresh_token === undefined) {
-      //   return 'Invalid token';
-      // }
-      // console.log(refresh_token);
-      let token;
+      const profile_info = await user.getProfileInfo().then((pi) => {
+        return pi;
+      })
+      console.log(profile_info);
+      const backstage_identity = await user.getBackstageIdentity().then((bi) => {
+        return bi;
+      })
+      console.log(backstage_identity);
+      const refresh_token = await user.getCredentials().then((creds) => {
+        console.log(creds);
+        console.log(creds.token);
+        return creds.token;
+      });
+      if (refresh_token === undefined) {
+        return 'Invalid token';
+      }
+      console.log(refresh_token);
+      let token = refresh_token;
+      let default_token;
       try {
-        token = await refresh(
+        default_token = await refresh(
           config.getString('backend.baseUrl'),
           config.getString('ocm.clientId'),
           config.getString('ocm.clientSecret'),
@@ -202,29 +203,51 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
         console.log("Error: ", e);
         return 'Invalid token';
       }
-      if (token.error) {
-        return token.error_description;
+      if (default_token.error) {
+        return default_token.error_description;
       }
 
       let products = '';
       if (product) {
-        const p = await lookupProduct(
-          config.getString('backend.baseUrl'),
-          token.access_token,
-          product,
-        );
+        let p;
+        try {
+          p = await lookupProduct(
+            config.getString('backend.baseUrl'),
+            // token.access_token,
+            token,
+            product,
+          );
+        } catch {
+          console.log("Error using user token, falling back to default token");
+          p = await lookupProduct(
+            config.getString('backend.baseUrl'),
+            default_token.access_token,
+            product,
+          );
+        }
         if (p.items && p.items.length > 0) {
           products = `?product_id=${p.items[0].id}`;
         }
       }
       if (entity) {
-        const p = await lookupProduct(
-          config.getString('backend.baseUrl'),
-          token.access_token,
-          entity.entity.metadata.name,
-        );
-        if (p.items.length > 0) {
-          products = `?product_id=${p.items[0].id}`;
+        let p;
+        try {
+          p = await lookupProduct(
+            config.getString('backend.baseUrl'),
+            // token.access_token,
+            token,
+            entity.entity.metadata.name,
+          );
+          if (p.items.length > 0) {
+            products = `?product_id=${p.items[0].id}`;
+          }
+        } catch {
+          console.log("Error using user token, falling back to default token");
+          p = await lookupProduct(
+            config.getString('backend.baseUrl'),
+            default_token.access_token,
+            entity.entity.metadata.name,
+          );
         }
       }
 
@@ -232,17 +255,34 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
         return 'No product based on entity';
       }
 
+      let incidentList;
+      try {
       // TODO: Filter by status?  Add a toggle?
-      const incidentList = fetch(
+      incidentList = fetch(
         `${config.getString('backend.baseUrl')}/api/proxy/web-rca/incidents${products}`,
         {
           headers: {
-            Authorization: `Bearer ${token.access_token}`,
+            // Authorization: `Bearer ${token.access_token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )
       .then(resp => resp.json())
       .catch(e => e);
+      } catch {
+        console.log("Error using user token, falling back to default token");
+        incidentList = fetch(
+          `${config.getString('backend.baseUrl')}/api/proxy/web-rca/incidents${products}`,
+          {
+            headers: {
+              // Authorization: `Bearer ${token.access_token}`,
+              Authorization: `Bearer ${default_token.access_token}`,
+            },
+          },
+        )
+          .then(resp => resp.json())
+          .catch(e => e);
+      }
 
       return incidentList as Promise<IncidentList>;
     }, []);
