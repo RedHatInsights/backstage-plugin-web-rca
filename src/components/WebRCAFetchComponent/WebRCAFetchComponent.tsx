@@ -248,6 +248,9 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
             default_token.access_token,
             entity.entity.metadata.name,
           );
+          if (p.items && p.items.length > 0) {
+            products = `?product_id=${p.items[0].id}`;
+          }
         }
       }
 
