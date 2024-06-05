@@ -6,7 +6,7 @@ import {
   ResponseErrorPanel,
 } from '@backstage/core-components';
 import useAsync from 'react-use/lib/useAsync';
-import { useApi, configApiRef, identityApiRef } from '@backstage/core-plugin-api';
+import { useApi, configApiRef, createApiRef, identityApiRef, OpenIdConnectApi } from '@backstage/core-plugin-api';
 import '@backstage/plugin-user-settings';
 import { Typography } from '@material-ui/core';
 import { InfoCard } from '@backstage/core-components';
@@ -168,6 +168,8 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
   const config = useApi(configApiRef);
   const user = useApi(identityApiRef);
   const entity = useEntity();
+  const f = useApi(createApiRef<OpenIdConnectApi>({id: 'oidc'}));
+  // f.getIdToken({optional: false, instantPopup: false});
 
   const { value, loading, error } = useAsync(async (): Promise<
     IncidentList | string
@@ -177,11 +179,11 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
       const profile_info = await user.getProfileInfo().then((pi) => {
         return pi;
       })
-      console.log(profile_info);
+      console.log("Profile Info: ", profile_info);
       const backstage_identity = await user.getBackstageIdentity().then((bi) => {
         return bi;
       })
-      console.log(backstage_identity);
+      console.log("Backstage Identity: ", backstage_identity);
       const refresh_token = await user.getCredentials().then((creds) => {
         console.log(creds);
         console.log(creds.token);
@@ -190,8 +192,11 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
       if (refresh_token === undefined) {
         return 'Invalid token';
       }
-      console.log(refresh_token);
+      console.log("Refresh Token: ", refresh_token);
       let token = refresh_token;
+
+      let oidcToken = await f.getIdToken({optional: false, instantPopup: false});
+      console.log("OIDC Token: ", oidcToken);
       let default_token;
       try {
         default_token = await refresh(
