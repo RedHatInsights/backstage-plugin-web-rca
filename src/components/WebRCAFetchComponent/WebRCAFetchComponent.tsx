@@ -6,7 +6,7 @@ import {
   ResponseErrorPanel,
 } from '@backstage/core-components';
 import useAsync from 'react-use/lib/useAsync';
-import { useApi, configApiRef, createApiRef, identityApiRef, OpenIdConnectApi } from '@backstage/core-plugin-api';
+import { useApi, configApiRef, identityApiRef, OpenIdConnectApi, OAuthApi, ProfileInfoApi, BackstageIdentityApi, SessionApi, createApiRef } from '@backstage/core-plugin-api';
 import '@backstage/plugin-user-settings';
 import { Typography } from '@material-ui/core';
 import { InfoCard } from '@backstage/core-components';
@@ -168,7 +168,13 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
   const config = useApi(configApiRef);
   const user = useApi(identityApiRef);
   const entity = useEntity();
-  const f = useApi(createApiRef<OpenIdConnectApi>({id: 'oidc'}));
+  type CustomAuthApiRefType = OAuthApi & OpenIdConnectApi & ProfileInfoApi & BackstageIdentityApi & SessionApi;
+
+  // @REF [Janus oidc config](https://github.com/janus-idp/backstage-showcase/blob/e1e62157e9b467eed0c6ab446a9df597b46e3333/packages/app/src/api/AuthApiRefs.ts#L2)
+  const f: CustomAuthApiRefType = useApi(createApiRef({
+    id: 'internal.auth.oidc',
+  }));
+  // const f = useApi(createApiRef<OpenIdConnectApi>({id: 'oidc'}));
   // f.getIdToken({optional: false, instantPopup: false});
 
   const { value, loading, error } = useAsync(async (): Promise<
