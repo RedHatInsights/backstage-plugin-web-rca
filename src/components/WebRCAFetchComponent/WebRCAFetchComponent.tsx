@@ -210,11 +210,11 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
         let oidcToken = await f.getIdToken({optional: true, instantPopup: false});
         console.log("OIDC Token: ", oidcToken);
 
-        if (oidcToken) {
+        if (oidcToken != "") {
           token = oidcToken;
         }
       } else {
-        console.log("No OIDC Token");
+          console.log("No OIDC Token");
       }
 
       let default_token;

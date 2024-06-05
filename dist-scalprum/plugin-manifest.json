@@ -5,7 +5,7 @@
   "registrationMethod": "callback",
   "baseURL": "auto",
   "loadScripts": [
-    "plugin-web-rca.0e647b4a322593ca82f8.js"
+    "plugin-web-rca.596ff027d8f60628f7be.js"
   ],
-  "buildHash": "0e647b4a322593ca82f8cdf377dfa11b"
+  "buildHash": "596ff027d8f60628f7be453dc47f0292"
 }
