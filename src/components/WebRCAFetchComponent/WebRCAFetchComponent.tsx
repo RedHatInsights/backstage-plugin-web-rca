@@ -169,11 +169,16 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
   const user = useApi(identityApiRef);
   const entity = useEntity();
   type CustomAuthApiRefType = OAuthApi & OpenIdConnectApi & ProfileInfoApi & BackstageIdentityApi & SessionApi;
+  let f: CustomAuthApiRefType;
 
-  // @REF [Janus oidc config](https://github.com/janus-idp/backstage-showcase/blob/e1e62157e9b467eed0c6ab446a9df597b46e3333/packages/app/src/api/AuthApiRefs.ts#L2)
-  const f: CustomAuthApiRefType = useApi(createApiRef({
-    id: 'internal.auth.oidc',
-  }));
+  try {
+    // @REF [Janus oidc config](https://github.com/janus-idp/backstage-showcase/blob/e1e62157e9b467eed0c6ab446a9df597b46e3333/packages/app/src/api/AuthApiRefs.ts#L2)
+     f = useApi(createApiRef({
+      id: 'internal.auth.oidc',
+    }));
+  } catch {
+    console.warn("Could not get 'internal.auth.oidc' api ref");
+  }
   // const f = useApi(createApiRef<OpenIdConnectApi>({id: 'oidc'}));
   // f.getIdToken({optional: false, instantPopup: false});
 
@@ -201,8 +206,17 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
       console.log("Refresh Token: ", refresh_token);
       let token = refresh_token;
 
-      let oidcToken = await f.getIdToken({optional: false, instantPopup: false});
-      console.log("OIDC Token: ", oidcToken);
+      if (f) {
+        let oidcToken = await f.getIdToken({optional: true, instantPopup: false});
+        console.log("OIDC Token: ", oidcToken);
+
+        if (oidcToken) {
+          token = oidcToken;
+        }
+      } else {
+        console.log("No OIDC Token");
+      }
+
       let default_token;
       try {
         default_token = await refresh(
