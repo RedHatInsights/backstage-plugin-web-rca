@@ -1,0 +1,36 @@
+{
+  "$schema": "https://backstage.io/schema/config-v1",
+  "title": "@backstage/user-settings",
+  "type": "object",
+  "required": [
+    "ocm"
+  ],
+  "properties": {
+    "auth": {
+      "type": "object",
+      "properties": {
+        "providers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "visibility": "frontend",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "ocm": {
+      "visibility": "frontend",
+      "type": "object",
+      "required": [
+        "webRcaUIUrl"
+      ],
+      "properties": {
+        "webRcaUIUrl": {
+          "visibility": "frontend",
+          "type": "string"
+        }
+      }
+    }
+  }
+}
