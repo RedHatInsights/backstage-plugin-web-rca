@@ -1,0 +1,5 @@
+{
+  "name": "@backstage-plugin-web-rca/backstage-plugin-web-rca-backend-dynamic",
+  "version": "0.1.2",
+  "main": "../dist/alpha.cjs.js"
+}

@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "required": [
+    "ocm"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "ocm": {
+      "visibility": "backend",
+      "type": "object",
+      "required": [
+        "clientId",
+        "clientSecret",
+        "webRcaUIUrl"
+      ],
+      "properties": {
+        "webRcaUIUrl": {
+          "visibility": "backend",
+          "type": "string"
+        },
+        "clientId": {
+          "visibility": "secret",
+          "type": "string"
+        },
+        "clientSecret": {
+          "visibility": "secret",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

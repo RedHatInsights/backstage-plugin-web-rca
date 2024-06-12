@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
-sha=$(sha256sum backstage-plugin-web-rca-backstage-plugin-web-rca-frontend-v0.1.0.tgz | awk '{print $1}' | xxd -r -p | base64)
+fsha=$(sha256sum frontend/*.tgz | awk '{print $1}' | xxd -r -p | base64)
+bsha=$(sha256sum backend/*.tgz | awk '{print $1}' | xxd -r -p | base64)
 
-echo -n "sha256-${sha}"
+echo "Frontend: sha256-${fsha}"
+echo "Backend:  sha256-${bsha}"
