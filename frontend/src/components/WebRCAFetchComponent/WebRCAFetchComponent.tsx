@@ -102,6 +102,7 @@ export const DenseTable = ({
   );
 };
 
+const PRODUCT_LABEL_KEY = 'rhdh/web-rca/product-name';
 
 export const WebRCAFetchComponent = ({ product }: FetchProps) => {
   const config = useApi(configApiRef);
@@ -118,7 +119,21 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
         products = product;
       }
       if (entity) {
+        // Default to entity name
         products = entity.entity.metadata.name;
+
+        if (entity.entity.metadata.labels) {
+
+          // Overwrite name with service, if it exists
+          if ('service' in entity.entity.metadata.labels) {
+            products = entity.entity.metadata.labels['service'];
+          }
+
+          // Overwrite name with custom label, if it exists
+          if (PRODUCT_LABEL_KEY in entity.entity.metadata.labels) {
+            products = entity.entity.metadata.labels[PRODUCT_LABEL_KEY];
+          }
+        }
       }
 
       if (products === '') {
