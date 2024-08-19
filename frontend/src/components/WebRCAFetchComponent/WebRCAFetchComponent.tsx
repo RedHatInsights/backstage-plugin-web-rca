@@ -122,14 +122,13 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
         // Default to entity name
         products = entity.entity.metadata.name;
 
+        // Overwrite name with system, if it exists
+        if (entity.entity.spec && entity.entity.spec.system && typeof(entity.entity.spec.system) === 'string') {
+          products = entity.entity.spec.system;
+        }
+
+        // Overwrite name with custom label, if it exists
         if (entity.entity.metadata.labels) {
-
-          // Overwrite name with service, if it exists
-          if ('service' in entity.entity.metadata.labels) {
-            products = entity.entity.metadata.labels['service'];
-          }
-
-          // Overwrite name with custom label, if it exists
           if (PRODUCT_LABEL_KEY in entity.entity.metadata.labels) {
             products = entity.entity.metadata.labels[PRODUCT_LABEL_KEY];
           }
