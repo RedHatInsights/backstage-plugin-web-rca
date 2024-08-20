@@ -102,7 +102,7 @@ export const DenseTable = ({
   );
 };
 
-const PRODUCT_LABEL_KEY = 'rhdh/web-rca/product-name';
+const PRODUCT_ANNOTATION_KEY = 'web-rca/product-name';
 
 export const WebRCAFetchComponent = ({ product }: FetchProps) => {
   const config = useApi(configApiRef);
@@ -116,6 +116,7 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
 
       let products = '';
       if (product) {
+        // Product name can be passed in when used from page component
         products = product;
       }
       if (entity) {
@@ -127,11 +128,9 @@ export const WebRCAFetchComponent = ({ product }: FetchProps) => {
           products = entity.entity.spec.system;
         }
 
-        // Overwrite name with custom label, if it exists
-        if (entity.entity.metadata.labels) {
-          if (PRODUCT_LABEL_KEY in entity.entity.metadata.labels) {
-            products = entity.entity.metadata.labels[PRODUCT_LABEL_KEY];
-          }
+        // Overwrite name with custom annotation, if it exists
+        if (entity.entity.metadata.annotations && PRODUCT_ANNOTATION_KEY in entity.entity.metadata.annotations) {
+          products = entity.entity.metadata.annotations[PRODUCT_ANNOTATION_KEY];
         }
       }
 

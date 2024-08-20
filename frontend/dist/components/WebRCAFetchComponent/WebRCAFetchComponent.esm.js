@@ -55,14 +55,27 @@ const WebRCAFetchComponent = ({ product }) => {
   const config = useApi(configApiRef);
   const entity = useEntity();
   const { value, loading, error } = useAsync(async () => {
+    console.log("SMR");
     let products = "";
     if (product) {
       products = product;
     }
     if (entity) {
       products = entity.entity.metadata.name;
+      products = "foo";
+      console.log("ENTITY: SMR");
+      console.log(entity.entity.metadata.name);
+      console.log(entity.entity.spec);
+      console.log(entity.entity.metadata.labels);
+      if (entity.entity.spec && entity.entity.spec.system && typeof entity.entity.spec.system === "string") {
+        products = entity.entity.spec.system;
+        products = "bar";
+      }
       if (entity.entity.metadata.labels) {
-        products = entity.entity.metadata.labels[PRODUCT_LABEL_KEY];
+        if (PRODUCT_LABEL_KEY in entity.entity.metadata.labels) {
+          products = entity.entity.metadata.labels[PRODUCT_LABEL_KEY];
+          products = "baz";
+        }
       }
     }
     if (products === "") {
