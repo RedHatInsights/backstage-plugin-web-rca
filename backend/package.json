@@ -1,6 +1,6 @@
 {
   "name": "@backstage-plugin-web-rca/backstage-plugin-web-rca-backend",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "main": "dist/index.cjs.js",
   "types": "src/index.d.ts",
   "license": "Apache-2.0",
